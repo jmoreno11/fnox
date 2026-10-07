@@ -39,20 +39,42 @@ fnox get DATABASE_URL
 
 ## Authentication
 
-Choose one:
+fnox picks the credential from the environment, in this order:
+
+1. Service principal: `AZURE_TENANT_ID`, `AZURE_CLIENT_ID` and `AZURE_CLIENT_SECRET` (all three)
+2. Workload identity: `AZURE_TENANT_ID`, `AZURE_CLIENT_ID` and `AZURE_FEDERATED_TOKEN_FILE`
+3. Azure CLI (`az login`), then Azure Developer CLI (`azd auth login`)
 
 ```bash
-# Azure CLI (development)
+# Development
 az login
 
-# Service Principal (CI/CD)
+# Service principal (CI/CD)
+export AZURE_TENANT_ID="..."
 export AZURE_CLIENT_ID="..."
 export AZURE_CLIENT_SECRET="..."
-export AZURE_TENANT_ID="..."
-
-# Managed Identity (automatic on Azure VMs/Functions)
-# No configuration needed!
 ```
+
+Workload identity needs no secret and no `az`. Any OIDC token the app registration trusts
+through a federated credential works, such as one from GitLab CI:
+
+```yaml
+read-secrets:
+  id_tokens:
+    AZURE_ID_TOKEN:
+      aud: api://AzureADTokenExchange
+  variables:
+    AZURE_TENANT_ID: "..."
+    AZURE_CLIENT_ID: "..."
+    AZURE_FEDERATED_TOKEN_FILE: /tmp/azure-token
+  script:
+    - printf '%s' "$AZURE_ID_TOKEN" > "$AZURE_FEDERATED_TOKEN_FILE"
+    - fnox exec -- ./deploy.sh
+```
+
+On AKS with workload identity enabled, the webhook sets all three variables for you.
+
+Managed identity is not supported; use workload identity or a service principal.
 
 ## Permissions
 

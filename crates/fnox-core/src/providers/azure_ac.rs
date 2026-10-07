@@ -1,7 +1,6 @@
+use super::azure_shared;
 use crate::error::{FnoxError, Result};
 use async_trait::async_trait;
-use azure_core::credentials::TokenCredential;
-use azure_identity::DeveloperToolsCredential;
 use reqwest::Url;
 use serde::Deserialize;
 
@@ -150,11 +149,11 @@ impl AzureAppConfigurationProvider {
 
     /// Acquire a Microsoft Entra ID token for the App Configuration data plane
     async fn get_token(&self) -> Result<String> {
-        let credential = DeveloperToolsCredential::new(None).map_err(|e: azure_core::Error| {
+        let credential = azure_shared::credential().map_err(|e: azure_core::Error| {
             FnoxError::ProviderAuthFailed {
                 provider: PROVIDER_NAME.to_string(),
                 details: e.to_string(),
-                hint: "Run 'az login' to authenticate with Azure".to_string(),
+                hint: azure_shared::AUTH_HINT.to_string(),
                 url: PROVIDER_URL.to_string(),
             }
         })?;
@@ -166,7 +165,7 @@ impl AzureAppConfigurationProvider {
                 .map_err(|e: azure_core::Error| FnoxError::ProviderAuthFailed {
                     provider: PROVIDER_NAME.to_string(),
                     details: e.to_string(),
-                    hint: "Run 'az login' to authenticate with Azure".to_string(),
+                    hint: azure_shared::AUTH_HINT.to_string(),
                     url: PROVIDER_URL.to_string(),
                 })?;
 

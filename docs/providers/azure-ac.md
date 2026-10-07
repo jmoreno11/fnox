@@ -6,7 +6,7 @@ description: "Load Azure App Configuration values with fnox, including label sel
 
 Azure App Configuration is the Azure store for non-secret configuration: endpoints, feature toggles, tuning values. This provider reads key-values from it, so configuration your infrastructure owns can be resolved instead of hardcoded in `fnox.toml`.
 
-Read-only. Use [Azure Key Vault Secrets](/providers/azure-sm) for anything sensitive.
+Read-only. Use [Azure Key Vault secrets](/providers/azure-sm) for anything sensitive.
 
 ## Quick start
 
@@ -41,13 +41,8 @@ fnox get API_URL
 
 ## Authentication
 
-```bash
-# Azure CLI
-az login
-
-# Azure Developer CLI
-azd auth login
-```
+Same as [Azure Key Vault secrets](/providers/azure-sm#authentication): a service principal or
+workload identity from the environment, else an `az` or `azd` login.
 
 ## Permissions
 
@@ -87,5 +82,5 @@ This provider is read-only and intended for non-secret configuration. Use labels
 
 ## Next steps
 
-- [Azure Key Vault Secrets](/providers/azure-sm) - For actual secrets
+- [Azure Key Vault secrets](/providers/azure-sm) - For actual secrets
 - [Profiles](/guide/profiles) - Per-environment labels

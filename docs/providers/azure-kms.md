@@ -8,7 +8,7 @@ Azure Key Vault Keys encrypts secrets using Azure-managed keys. The encrypted ci
 
 ## Quick start
 
-Authenticate to Azure and create a Key Vault before following this example. The identity running fnox needs permission to encrypt and decrypt with the key.
+Authenticate to Azure and create a Key Vault before following this example. The identity running fnox needs permission to encrypt and decrypt with the key. fnox authenticates the same way as [Azure Key Vault secrets](/providers/azure-sm#authentication).
 
 ```sh
 # Create a key in an existing Key Vault
@@ -61,5 +61,5 @@ Ciphertext lives in your config. Decryption still requires network access and pe
 
 ## Next steps
 
-- [Azure Key Vault Secrets](/providers/azure-sm) - Remote storage alternative
+- [Azure Key Vault secrets](/providers/azure-sm) - Remote storage alternative
 - [Age Encryption](/providers/age) - Free local encryption

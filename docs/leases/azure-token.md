@@ -25,12 +25,13 @@ scope = "https://management.azure.com/.default"
 The backend needs Azure credentials. fnox looks for them in this order:
 
 1. Service principal environment variables: `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`, and `AZURE_TENANT_ID` (all three required)
-2. Azure CLI session (requires the `az` CLI to be installed and logged in)
+2. Workload identity: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_FEDERATED_TOKEN_FILE` (see [Azure Key Vault secrets](/providers/azure-sm#authentication) for a CI example)
+3. Azure CLI session (requires the `az` CLI to be installed and logged in), then Azure Developer CLI
 
 If none are found, fnox prints:
 
 ```text
-Azure credentials not found. Run 'az login' or set AZURE_CLIENT_ID/AZURE_CLIENT_SECRET/AZURE_TENANT_ID.
+Azure credentials not found. Run 'az login', or set AZURE_TENANT_ID and AZURE_CLIENT_ID with AZURE_CLIENT_SECRET or AZURE_FEDERATED_TOKEN_FILE.
 ```
 
 ## Credentials produced

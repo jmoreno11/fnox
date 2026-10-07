@@ -1,7 +1,7 @@
+use super::azure_shared;
 use crate::error::{FnoxError, Result};
 use async_trait::async_trait;
 use azure_core::{Error, error::ErrorKind, http::StatusCode};
-use azure_identity::DeveloperToolsCredential;
 use azure_security_keyvault_secrets::{SecretClient, models::SetSecretParameters};
 
 pub fn env_dependencies() -> &'static [&'static str] {
@@ -57,16 +57,12 @@ impl AzureSecretsManagerProvider {
 
     /// Create an Azure Key Vault secret client
     fn create_client(&self) -> Result<SecretClient> {
-        // Use DeveloperToolsCredential which supports multiple auth methods:
-        // - Azure CLI
-        // - Azure Developer CLI
-        let credential =
-            DeveloperToolsCredential::new(None).map_err(|e| FnoxError::ProviderAuthFailed {
-                provider: "Azure Key Vault".to_string(),
-                details: e.to_string(),
-                hint: "Run 'az login' to authenticate with Azure".to_string(),
-                url: URL.to_string(),
-            })?;
+        let credential = azure_shared::credential().map_err(|e| FnoxError::ProviderAuthFailed {
+            provider: "Azure Key Vault".to_string(),
+            details: e.to_string(),
+            hint: azure_shared::AUTH_HINT.to_string(),
+            url: URL.to_string(),
+        })?;
 
         SecretClient::new(&self.vault_url, credential, None).map_err(|e| {
             FnoxError::ProviderApiError {
